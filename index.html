@@ -603,10 +603,10 @@
       <div class="field">
         <label>Langue(s) de la clientèle</label>
         <div class="check-group">
-          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="fr"> Français</label>
-          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="en"> Anglais</label>
-          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="es"> Espagnol</label>
-          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="other"> Autre</label>
+          <label class="check-item" onclick="toggleCheck(this, event)"><input type="checkbox" value="fr"> Français</label>
+          <label class="check-item" onclick="toggleCheck(this, event)"><input type="checkbox" value="en"> Anglais</label>
+          <label class="check-item" onclick="toggleCheck(this, event)"><input type="checkbox" value="es"> Espagnol</label>
+          <label class="check-item" onclick="toggleCheck(this, event)"><input type="checkbox" value="other"> Autre</label>
         </div>
       </div>
       <div class="field">
@@ -650,16 +650,16 @@
       <div class="field">
         <label>Éléments disponibles</label>
         <div class="check-group">
-          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Compte Google Ads existant</label>
-          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Google Analytics 4</label>
-          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Google Tag Manager</label>
-          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Google Merchant Center</label>
-          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> CRM connecté</label>
-          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Photos/visuels qualité</label>
-          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Logo vectoriel</label>
-          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Vidéos disponibles</label>
-          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Charte de marque</label>
-          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Liste d'emails clients</label>
+          <label class="check-item" onclick="toggleCheck(this, event)"><input type="checkbox"> Compte Google Ads existant</label>
+          <label class="check-item" onclick="toggleCheck(this, event)"><input type="checkbox"> Google Analytics 4</label>
+          <label class="check-item" onclick="toggleCheck(this, event)"><input type="checkbox"> Google Tag Manager</label>
+          <label class="check-item" onclick="toggleCheck(this, event)"><input type="checkbox"> Google Merchant Center</label>
+          <label class="check-item" onclick="toggleCheck(this, event)"><input type="checkbox"> CRM connecté</label>
+          <label class="check-item" onclick="toggleCheck(this, event)"><input type="checkbox"> Photos/visuels qualité</label>
+          <label class="check-item" onclick="toggleCheck(this, event)"><input type="checkbox"> Logo vectoriel</label>
+          <label class="check-item" onclick="toggleCheck(this, event)"><input type="checkbox"> Vidéos disponibles</label>
+          <label class="check-item" onclick="toggleCheck(this, event)"><input type="checkbox"> Charte de marque</label>
+          <label class="check-item" onclick="toggleCheck(this, event)"><input type="checkbox"> Liste d'emails clients</label>
         </div>
       </div>
       <div class="field">
@@ -741,27 +741,36 @@
 
 <script>
 // ── TOGGLE SECTIONS ──
-function toggleSection(header) {
+function toggleSection(el) {
+  // Always target the .section-header even if click landed on child
+  const header = el.closest ? el.closest('.section-header') : el;
+  if (!header) return;
   header.classList.toggle('open');
-  header.nextElementSibling.classList.toggle('open');
+  const body = header.nextElementSibling;
+  if (body) body.classList.toggle('open');
 }
 
 // ── CHECK / RADIO ──
-function toggleCheck(label) {
-  label.classList.toggle('checked');
+function toggleCheck(el, event) {
+  event.preventDefault();
+  event.stopPropagation();
+  el.classList.toggle('checked');
   updateProgress();
 }
 
-function selectRadio(label, name) {
+function selectRadio(el, name) {
+  // Find the closest .radio-item in case click landed on child element
+  const item = el.closest ? el.closest('.radio-item') : el;
   document.querySelectorAll(`[name="${name}"]`).forEach(r => {
     r.closest('.radio-item').classList.remove('selected');
   });
-  label.classList.add('selected');
+  item.classList.add('selected');
   updateProgress();
 
   // Show/hide B2B fields
   if (name === 'kpi') {
-    const val = label.querySelector('input').value;
+    const input = item.querySelector('input');
+    const val = input ? input.value : '';
     document.getElementById('b2b-fields').style.display = val === 'cpl' ? 'grid' : 'none';
     document.getElementById('cpa-fields').style.display = (val === 'cpa' || val === 'roas') ? 'grid' : 'none';
     calcKPIs();
@@ -925,6 +934,8 @@ function clearForm() {
     document.querySelectorAll('.check-item').forEach(c => c.classList.remove('checked'));
     document.getElementById('calc-result').classList.remove('visible');
     document.getElementById('summary').classList.remove('visible');
+    document.getElementById('b2b-fields').style.display = 'none';
+    document.getElementById('cpa-fields').style.display = 'none';
     updateProgress();
   }
 }
