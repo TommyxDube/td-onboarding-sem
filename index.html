@@ -1,0 +1,935 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Questionnaire Onboarding Client — SEM</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;700&display=swap');
+
+  :root {
+    --black: #111;
+    --white: #fff;
+    --gray-100: #f5f5f5;
+    --gray-200: #ebebeb;
+    --border: #ddd;
+    --muted: #888;
+    --text: #222;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gray-100);
+    color: var(--text);
+    padding-bottom: 80px;
+  }
+
+  header {
+    background: var(--black);
+    padding: 28px 32px 24px;
+    margin-bottom: 28px;
+  }
+
+  header .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #555;
+    margin-bottom: 8px;
+  }
+
+  header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+
+  header p { font-size: 12.5px; color: #777; }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ── PROGRESS ── */
+  .progress-bar {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 4px;
+    background: var(--gray-200);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--black);
+    border-radius: 2px;
+    transition: width 0.3s;
+    width: 0%;
+  }
+
+  .progress-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  .section-header {
+    background: var(--black);
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .section-header .icon { font-size: 16px; }
+
+  .section-header h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--white);
+    flex: 1;
+  }
+
+  .section-header .toggle {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: #555;
+    transition: transform 0.2s;
+  }
+
+  .section-header.open .toggle { transform: rotate(180deg); }
+
+  .section-body {
+    padding: 18px;
+    display: none;
+  }
+
+  .section-body.open { display: block; }
+
+  /* ── FIELDS ── */
+  .field {
+    margin-bottom: 14px;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  @media (max-width: 580px) {
+    .field-row { grid-template-columns: 1fr; }
+    .container { padding: 0 14px; }
+    header { padding: 20px 16px; }
+  }
+
+  label {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+
+  .field-note {
+    font-size: 11px;
+    color: #aaa;
+    margin-top: 3px;
+    font-style: italic;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="url"],
+  textarea,
+  select {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--black);
+    background: var(--white);
+    transition: border-color 0.15s;
+    -moz-appearance: textfield;
+  }
+
+  input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--black);
+  }
+
+  textarea { resize: vertical; min-height: 70px; }
+
+  select { cursor: pointer; }
+
+  /* ── CHECKBOX GROUP ── */
+  .check-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--muted);
+    transition: all 0.12s;
+    user-select: none;
+  }
+
+  .check-item:hover { border-color: var(--black); color: var(--black); }
+  .check-item.checked { background: var(--black); color: var(--white); border-color: var(--black); }
+
+  .check-item input { display: none; }
+
+  /* ── RADIO GROUP ── */
+  .radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .radio-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--muted);
+    transition: all 0.12s;
+    user-select: none;
+  }
+
+  .radio-item:hover { border-color: var(--black); color: var(--black); }
+  .radio-item.selected { background: var(--black); color: var(--white); border-color: var(--black); }
+  .radio-item input { display: none; }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: var(--gray-200);
+    margin: 16px 0;
+  }
+
+  /* ── CALCULATED RESULT ── */
+  .calc-result {
+    background: var(--black);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-top: 12px;
+    display: none;
+  }
+
+  .calc-result.visible { display: block; }
+
+  .calc-result-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #555;
+    margin-bottom: 10px;
+  }
+
+  .calc-result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+  }
+
+  .calc-result-item { }
+
+  .calc-result-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: #666;
+    margin-bottom: 3px;
+  }
+
+  .calc-result-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--white);
+  }
+
+  /* ── ACTIONS ── */
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 11px 22px;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+  }
+
+  .btn-primary { background: var(--black); color: var(--white); }
+  .btn-primary:hover { background: #333; }
+  .btn-secondary { background: var(--white); color: var(--black); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--black); }
+
+  /* ── SUMMARY ── */
+  #summary {
+    display: none;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 20px;
+  }
+
+  #summary.visible { display: block; }
+
+  .summary-header {
+    background: var(--black);
+    padding: 14px 18px;
+  }
+
+  .summary-header h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--white);
+  }
+
+  .summary-body { padding: 18px; }
+
+  .summary-section { margin-bottom: 16px; }
+
+  .summary-section h3 {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+  }
+
+  .summary-row {
+    display: flex;
+    gap: 12px;
+    padding: 5px 0;
+    border-bottom: 1px solid #f5f5f5;
+    font-size: 12.5px;
+  }
+
+  .summary-row:last-child { border-bottom: none; }
+  .summary-key { color: var(--muted); flex-shrink: 0; width: 160px; }
+  .summary-val { color: var(--black); font-weight: 500; }
+
+  .summary-kpi {
+    background: var(--black);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-top: 14px;
+  }
+
+  .summary-kpi h3 {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #555;
+    margin-bottom: 10px;
+    border: none;
+    padding: 0;
+  }
+
+  .summary-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+  }
+
+  .summary-kpi-item .k-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: #666;
+    margin-bottom: 3px;
+  }
+
+  .summary-kpi-item .k-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--white);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">// Onboarding · Nouveau client</div>
+  <h1>Questionnaire client SEM</h1>
+  <p>Remplis ce formulaire avec le client lors du premier meeting. Les calculs se font automatiquement.</p>
+</header>
+
+<div class="container">
+
+  <div class="progress-bar">
+    <span class="progress-label">Complétion</span>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <span class="progress-label" id="progress-text">0%</span>
+  </div>
+
+  <!-- ── SECTION 1 : INFO CLIENT ── -->
+  <div class="section">
+    <div class="section-header open" onclick="toggleSection(this)">
+      <span class="icon">🏢</span>
+      <h2>1 — Informations client</h2>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="section-body open">
+      <div class="field-row">
+        <div class="field">
+          <label>Nom de l'entreprise</label>
+          <input type="text" id="company" placeholder="Ex: Ateliers Culinaires Marchand" oninput="updateProgress()">
+        </div>
+        <div class="field">
+          <label>Secteur d'activité</label>
+          <input type="text" id="sector" placeholder="Ex: École de cuisine, B2B SaaS..." oninput="updateProgress()">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Nom du contact principal</label>
+          <input type="text" id="contact-name" placeholder="Prénom Nom" oninput="updateProgress()">
+        </div>
+        <div class="field">
+          <label>Email du contact</label>
+          <input type="email" id="contact-email" placeholder="nom@entreprise.com" oninput="updateProgress()">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Site web</label>
+          <input type="url" id="website" placeholder="https://" oninput="updateProgress()">
+        </div>
+        <div class="field">
+          <label>Marché géographique</label>
+          <input type="text" id="geo" placeholder="Ex: Québec, Canada, bilingue FR/EN" oninput="updateProgress()">
+        </div>
+      </div>
+      <div class="field">
+        <label>Description de l'offre (en une phrase)</label>
+        <textarea id="offer" placeholder="Ce que l'entreprise vend, à qui, et quel est le bénéfice principal..." oninput="updateProgress()"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 2 : OBJECTIFS ── -->
+  <div class="section">
+    <div class="section-header open" onclick="toggleSection(this)">
+      <span class="icon">🎯</span>
+      <h2>2 — Objectifs et KPI</h2>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="section-body open">
+      <div class="field">
+        <label>Objectif principal de la campagne</label>
+        <div class="radio-group">
+          <label class="radio-item" onclick="selectRadio(this, 'kpi')">
+            <input type="radio" name="kpi" value="cpa"> CPA — Acquisition (service/abonnement)
+          </label>
+          <label class="radio-item" onclick="selectRadio(this, 'kpi')">
+            <input type="radio" name="kpi" value="roas"> ROAS — E-commerce
+          </label>
+          <label class="radio-item" onclick="selectRadio(this, 'kpi')">
+            <input type="radio" name="kpi" value="cpl"> CPL — Génération de leads B2B
+          </label>
+          <label class="radio-item" onclick="selectRadio(this, 'kpi')">
+            <input type="radio" name="kpi" value="cpm"> CPM — Notoriété / lancement
+          </label>
+          <label class="radio-item" onclick="selectRadio(this, 'kpi')">
+            <input type="radio" name="kpi" value="cpc"> CPC — Volume de trafic
+          </label>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="field-row">
+        <div class="field">
+          <label>Volume cible par mois</label>
+          <input type="number" id="volume" placeholder="Ex: 20" oninput="updateProgress(); calcKPIs()">
+          <div class="field-note">Conversions, leads, ou ventes visées</div>
+        </div>
+        <div class="field">
+          <label>Budget mensuel Google Ads ($)</label>
+          <input type="number" id="budget" placeholder="Ex: 3500" oninput="updateProgress(); calcKPIs()">
+        </div>
+      </div>
+      <div class="field">
+        <label>Historique de campagnes Google Ads</label>
+        <div class="radio-group">
+          <label class="radio-item" onclick="selectRadio(this, 'history')">
+            <input type="radio" name="history" value="none"> Aucun — premier compte
+          </label>
+          <label class="radio-item" onclick="selectRadio(this, 'history')">
+            <input type="radio" name="history" value="existing"> Compte existant à reprendre
+          </label>
+          <label class="radio-item" onclick="selectRadio(this, 'history')">
+            <input type="radio" name="history" value="paused"> Compte existant en pause
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 3 : CHIFFRES ── -->
+  <div class="section">
+    <div class="section-header open" onclick="toggleSection(this)">
+      <span class="icon">💰</span>
+      <h2>3 — Chiffres clés (calcul automatique)</h2>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="section-body open">
+      <div class="field-row">
+        <div class="field">
+          <label>Prix de vente moyen ($)</label>
+          <input type="number" id="price" placeholder="Ex: 200" oninput="calcKPIs()">
+          <div class="field-note">Par transaction, commande ou contrat</div>
+        </div>
+        <div class="field">
+          <label>Marge brute (%)</label>
+          <input type="number" id="margin" placeholder="Ex: 55" min="1" max="100" oninput="calcKPIs()">
+          <div class="field-note">Ce qui reste après les coûts directs</div>
+        </div>
+      </div>
+
+      <div class="field-row" id="b2b-fields" style="display:none">
+        <div class="field">
+          <label>Taux de fermeture (%)</label>
+          <input type="number" id="close-rate" placeholder="Ex: 20" min="1" max="100" oninput="calcKPIs()">
+          <div class="field-note">Leads qui deviennent clients. Inconnu ? Utiliser 15%</div>
+        </div>
+        <div class="field">
+          <label>% acquisition acceptable</label>
+          <input type="number" id="acq-pct" placeholder="Ex: 10" min="1" max="60" oninput="calcKPIs()">
+          <div class="field-note">B2B cycle long : 8–12%. Service B2C : 30–45%</div>
+        </div>
+      </div>
+
+      <div class="field-row" id="cpa-fields">
+        <div class="field">
+          <label>% acquisition acceptable</label>
+          <input type="number" id="acq-pct-cpa" placeholder="Ex: 40" min="1" max="70" oninput="calcKPIs()">
+          <div class="field-note">Prudent 20–25% · Normal 35–40% · Agressif 50–60%</div>
+        </div>
+        <div class="field" style="display:flex; align-items:flex-end;">
+          <div style="width:100%; padding:9px 12px; background:var(--gray-100); border:1px solid var(--border); border-radius:6px; font-size:12px; color:var(--muted);">
+            Les résultats apparaissent ci-dessous automatiquement
+          </div>
+        </div>
+      </div>
+
+      <div class="calc-result" id="calc-result">
+        <div class="calc-result-title">// Calcul automatique</div>
+        <div class="calc-result-grid" id="calc-result-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 4 : AUDIENCE ── -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="icon">👥</span>
+      <h2>4 — Audience et ciblage</h2>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="field">
+        <label>Langue(s) de la clientèle</label>
+        <div class="check-group">
+          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="fr"> Français</label>
+          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="en"> Anglais</label>
+          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="es"> Espagnol</label>
+          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="other"> Autre</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Type de clientèle</label>
+        <div class="radio-group">
+          <label class="radio-item" onclick="selectRadio(this, 'clienttype')"><input type="radio" name="clienttype" value="b2c"> B2C — Grand public</label>
+          <label class="radio-item" onclick="selectRadio(this, 'clienttype')"><input type="radio" name="clienttype" value="b2b"> B2B — Entreprises</label>
+          <label class="radio-item" onclick="selectRadio(this, 'clienttype')"><input type="radio" name="clienttype" value="both"> Les deux</label>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Âge cible approximatif</label>
+          <input type="text" id="age" placeholder="Ex: 25–45 ans">
+        </div>
+        <div class="field">
+          <label>Zone géographique précise</label>
+          <input type="text" id="geo-precise" placeholder="Ex: île de Montréal, Québec, Ontario">
+        </div>
+      </div>
+      <div class="field">
+        <label>Concurrents principaux (noms)</label>
+        <input type="text" id="competitors" placeholder="Ex: Concurrent A, Concurrent B, Concurrent C">
+        <div class="field-note">Utile pour les campagnes concurrentes et l'Auction Insights</div>
+      </div>
+      <div class="field">
+        <label>Qu'est-ce qui vous différencie de vos concurrents ?</label>
+        <textarea id="differentiators" placeholder="Prix, qualité, service, rapidité, expertise, garantie..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 5 : TECHNIQUE ── -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="icon">⚙️</span>
+      <h2>5 — Technique et accès</h2>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="field">
+        <label>Éléments disponibles</label>
+        <div class="check-group">
+          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Compte Google Ads existant</label>
+          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Google Analytics 4</label>
+          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Google Tag Manager</label>
+          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Google Merchant Center</label>
+          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> CRM connecté</label>
+          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Photos/visuels qualité</label>
+          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Logo vectoriel</label>
+          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Vidéos disponibles</label>
+          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Charte de marque</label>
+          <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox"> Liste d'emails clients</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Tracking actuel — état</label>
+        <div class="radio-group">
+          <label class="radio-item" onclick="selectRadio(this, 'tracking')"><input type="radio" name="tracking" value="none"> Aucun tracking</label>
+          <label class="radio-item" onclick="selectRadio(this, 'tracking')"><input type="radio" name="tracking" value="partial"> Partiel (à vérifier)</label>
+          <label class="radio-item" onclick="selectRadio(this, 'tracking')"><input type="radio" name="tracking" value="full"> Complet et vérifié</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Landing pages existantes ?</label>
+        <div class="radio-group">
+          <label class="radio-item" onclick="selectRadio(this, 'lp')"><input type="radio" name="lp" value="none"> Aucune — à créer</label>
+          <label class="radio-item" onclick="selectRadio(this, 'lp')"><input type="radio" name="lp" value="existing"> Existantes — à optimiser</label>
+          <label class="radio-item" onclick="selectRadio(this, 'lp')"><input type="radio" name="lp" value="good"> Existantes et bonnes</label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Notes techniques / accès à obtenir</label>
+        <textarea id="tech-notes" placeholder="ID compte Google Ads, accès GA4, Merchant Center, CRM..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 6 : CALENDRIER ── -->
+  <div class="section">
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="icon">📅</span>
+      <h2>6 — Calendrier et contexte</h2>
+      <span class="toggle">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="field-row">
+        <div class="field">
+          <label>Date de lancement souhaitée</label>
+          <input type="text" id="launch-date" placeholder="Ex: 15 juillet 2026">
+        </div>
+        <div class="field">
+          <label>Durée du mandat prévu</label>
+          <input type="text" id="duration" placeholder="Ex: 6 mois, 1 an, indéterminé">
+        </div>
+      </div>
+      <div class="field">
+        <label>Saisonnalité / périodes clés</label>
+        <textarea id="seasonality" placeholder="Ex: Noël crucial, été creuse, rentrée septembre forte..."></textarea>
+      </div>
+      <div class="field">
+        <label>Événements prévus (promos, lancements, soldes)</label>
+        <textarea id="events" placeholder="Ex: Soldes du 20 au 30 juillet, lancement nouveau produit en octobre..."></textarea>
+      </div>
+      <div class="field">
+        <label>Autres notes importantes</label>
+        <textarea id="other-notes" placeholder="Contraintes, sensibilités de marque, historique à connaître..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ACTIONS ── -->
+  <div class="actions">
+    <button class="btn btn-primary" onclick="generateSummary()">Générer le résumé client</button>
+    <button class="btn btn-secondary" onclick="clearForm()">Effacer le formulaire</button>
+    <button class="btn btn-secondary" onclick="window.print()">Imprimer</button>
+  </div>
+
+  <!-- ── SUMMARY ── -->
+  <div id="summary">
+    <div class="summary-header">
+      <h2>Résumé onboarding — <span id="summary-company">Client</span></h2>
+    </div>
+    <div class="summary-body">
+      <div class="summary-section" id="summary-client"></div>
+      <div class="summary-section" id="summary-objectives"></div>
+      <div class="summary-kpi" id="summary-kpis"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── TOGGLE SECTIONS ──
+function toggleSection(header) {
+  header.classList.toggle('open');
+  header.nextElementSibling.classList.toggle('open');
+}
+
+// ── CHECK / RADIO ──
+function toggleCheck(label) {
+  label.classList.toggle('checked');
+  updateProgress();
+}
+
+function selectRadio(label, name) {
+  document.querySelectorAll(`[name="${name}"]`).forEach(r => {
+    r.closest('.radio-item').classList.remove('selected');
+  });
+  label.classList.add('selected');
+  updateProgress();
+
+  // Show/hide B2B fields
+  if (name === 'kpi') {
+    const val = label.querySelector('input').value;
+    document.getElementById('b2b-fields').style.display = val === 'cpl' ? 'grid' : 'none';
+    document.getElementById('cpa-fields').style.display = (val === 'cpa' || val === 'roas') ? 'grid' : 'none';
+    calcKPIs();
+  }
+}
+
+// ── PROGRESS ──
+function updateProgress() {
+  const fields = document.querySelectorAll('input[type="text"], input[type="number"], input[type="email"], input[type="url"], textarea');
+  let filled = 0;
+  fields.forEach(f => { if (f.value.trim()) filled++; });
+  const pct = Math.round((filled / fields.length) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = pct + '%';
+}
+
+// ── CALC ──
+function calcKPIs() {
+  const price = parseFloat(document.getElementById('price').value) || 0;
+  const margin = parseFloat(document.getElementById('margin').value) || 0;
+  const budget = parseFloat(document.getElementById('budget').value) || 0;
+  const volume = parseFloat(document.getElementById('volume').value) || 0;
+  const kpi = document.querySelector('[name="kpi"].selected input')?.value || '';
+
+  if (!price || !margin) {
+    document.getElementById('calc-result').classList.remove('visible');
+    return;
+  }
+
+  const marginDollars = price * (margin / 100);
+  let items = [];
+
+  if (kpi === 'cpa') {
+    const acq = parseFloat(document.getElementById('acq-pct-cpa').value) || 40;
+    const cpaMax = marginDollars * (acq / 100);
+    const budMin = volume ? cpaMax * volume : null;
+    items = [
+      { label: 'Marge brute en $', val: fmt(marginDollars) },
+      { label: 'CPA max', val: fmt(cpaMax) },
+      { label: 'Budget minimum', val: budMin ? fmt(budMin) : '—' },
+      { label: 'Budget OK ?', val: budget && budMin ? (budget >= budMin ? '✓ Oui' : '✗ Non') : '—' },
+    ];
+  } else if (kpi === 'roas') {
+    const roasMin = 1 / (margin / 100);
+    const roasCible = roasMin * 1.6;
+    items = [
+      { label: 'ROAS minimum', val: Math.round(roasMin * 10) / 10 + '×' },
+      { label: 'ROAS cible', val: Math.round(roasCible * 10) / 10 + '×' },
+      { label: 'tROAS Google Ads', val: Math.round(roasCible * 100) + '%' },
+      { label: 'Ventes pour ' + fmt(budget || 1000), val: fmt((budget || 1000) * roasCible) },
+    ];
+  } else if (kpi === 'cpl') {
+    const closeRate = parseFloat(document.getElementById('close-rate').value) || 15;
+    const acq = parseFloat(document.getElementById('acq-pct').value) || 10;
+    const leadValue = marginDollars * (closeRate / 100);
+    const cplMax = leadValue * (acq / 100);
+    const budMin = volume ? cplMax * volume : null;
+    items = [
+      { label: 'Marge brute en $', val: fmt(marginDollars) },
+      { label: 'Valeur / lead', val: fmt(leadValue) },
+      { label: 'CPL max', val: fmt(cplMax) },
+      { label: 'Budget minimum', val: budMin ? fmt(budMin) : '—' },
+    ];
+  }
+
+  if (items.length) {
+    document.getElementById('calc-result').classList.add('visible');
+    document.getElementById('calc-result-grid').innerHTML = items.map(i =>
+      `<div class="calc-result-item">
+        <div class="calc-result-label">${i.label}</div>
+        <div class="calc-result-value">${i.val}</div>
+      </div>`
+    ).join('');
+  }
+}
+
+const fmt = (n) => {
+  if (!n || isNaN(n)) return '—';
+  if (n >= 1000) return Math.round(n).toLocaleString('fr-CA') + ' $';
+  return (Math.round(n * 10) / 10) + ' $';
+};
+
+// ── SUMMARY ──
+function generateSummary() {
+  const company = document.getElementById('company').value || 'Client';
+  document.getElementById('summary-company').textContent = company;
+
+  const rows = (label, val) => val
+    ? `<div class="summary-row"><span class="summary-key">${label}</span><span class="summary-val">${val}</span></div>`
+    : '';
+
+  document.getElementById('summary-client').innerHTML = `
+    <h3>Informations client</h3>
+    ${rows('Entreprise', document.getElementById('company').value)}
+    ${rows('Secteur', document.getElementById('sector').value)}
+    ${rows('Contact', document.getElementById('contact-name').value)}
+    ${rows('Email', document.getElementById('contact-email').value)}
+    ${rows('Site web', document.getElementById('website').value)}
+    ${rows('Marché géo', document.getElementById('geo').value)}
+    ${rows('Offre', document.getElementById('offer').value)}
+    ${rows('Concurrents', document.getElementById('competitors').value)}
+    ${rows('Différenciateurs', document.getElementById('differentiators').value)}
+    ${rows('Lancement souhaité', document.getElementById('launch-date').value)}
+    ${rows('Durée mandat', document.getElementById('duration').value)}
+    ${rows('Saisonnalité', document.getElementById('seasonality').value)}
+    ${rows('Notes', document.getElementById('other-notes').value)}
+  `;
+
+  const kpi = document.querySelector('[name="kpi"].selected input')?.value || '—';
+  const kpiLabels = { cpa: 'CPA — Acquisition', roas: 'ROAS — E-commerce', cpl: 'CPL — B2B Leads', cpm: 'CPM — Notoriété', cpc: 'CPC — Trafic' };
+  const history = document.querySelector('[name="history"].selected input')?.value || '—';
+  const histLabels = { none: 'Aucun — premier compte', existing: 'Compte existant à reprendre', paused: 'Compte en pause' };
+
+  document.getElementById('summary-objectives').innerHTML = `
+    <h3>Objectifs</h3>
+    ${rows('KPI principal', kpiLabels[kpi])}
+    ${rows('Volume cible/mois', document.getElementById('volume').value)}
+    ${rows('Budget mensuel', document.getElementById('budget').value ? document.getElementById('budget').value + ' $' : '')}
+    ${rows('Historique', histLabels[history] || history)}
+    ${rows('Prix de vente moyen', document.getElementById('price').value ? document.getElementById('price').value + ' $' : '')}
+    ${rows('Marge brute', document.getElementById('margin').value ? document.getElementById('margin').value + ' %' : '')}
+  `;
+
+  // KPI block
+  const price = parseFloat(document.getElementById('price').value) || 0;
+  const margin = parseFloat(document.getElementById('margin').value) || 0;
+  const marginDollars = price * (margin / 100);
+
+  let kpiHtml = '<h3>// Calculs validés</h3><div class="summary-kpi-grid">';
+  if (kpi === 'cpa' && price && margin) {
+    const acq = parseFloat(document.getElementById('acq-pct-cpa').value) || 40;
+    const cpaMax = marginDollars * (acq / 100);
+    kpiHtml += `<div class="summary-kpi-item"><div class="k-label">Marge brute en $</div><div class="k-val">${fmt(marginDollars)}</div></div>`;
+    kpiHtml += `<div class="summary-kpi-item"><div class="k-label">CPA max à entrer</div><div class="k-val">${fmt(cpaMax)}</div></div>`;
+  } else if (kpi === 'roas' && margin) {
+    const roasMin = 1 / (margin / 100);
+    const roasCible = roasMin * 1.6;
+    kpiHtml += `<div class="summary-kpi-item"><div class="k-label">ROAS minimum</div><div class="k-val">${Math.round(roasMin*10)/10}×</div></div>`;
+    kpiHtml += `<div class="summary-kpi-item"><div class="k-label">tROAS Google Ads</div><div class="k-val">${Math.round(roasCible*100)}%</div></div>`;
+  } else if (kpi === 'cpl' && price && margin) {
+    const closeRate = parseFloat(document.getElementById('close-rate').value) || 15;
+    const acq = parseFloat(document.getElementById('acq-pct').value) || 10;
+    const leadValue = marginDollars * (closeRate / 100);
+    const cplMax = leadValue * (acq / 100);
+    kpiHtml += `<div class="summary-kpi-item"><div class="k-label">Valeur / lead</div><div class="k-val">${fmt(leadValue)}</div></div>`;
+    kpiHtml += `<div class="summary-kpi-item"><div class="k-label">CPL max à entrer</div><div class="k-val">${fmt(cplMax)}</div></div>`;
+  } else {
+    kpiHtml += `<div class="summary-kpi-item"><div class="k-label">Info</div><div class="k-val" style="font-size:14px; font-weight:400;">Remplir les chiffres pour voir les calculs</div></div>`;
+  }
+  kpiHtml += '</div>';
+  document.getElementById('summary-kpis').innerHTML = kpiHtml;
+
+  document.getElementById('summary').classList.add('visible');
+  document.getElementById('summary').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function clearForm() {
+  if (confirm('Effacer tout le formulaire ?')) {
+    document.querySelectorAll('input, textarea').forEach(f => f.value = '');
+    document.querySelectorAll('.radio-item').forEach(r => r.classList.remove('selected'));
+    document.querySelectorAll('.check-item').forEach(c => c.classList.remove('checked'));
+    document.getElementById('calc-result').classList.remove('visible');
+    document.getElementById('summary').classList.remove('visible');
+    updateProgress();
+  }
+}
+
+updateProgress();
+</script>
+</body>
+</html>
